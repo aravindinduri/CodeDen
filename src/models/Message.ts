@@ -3,6 +3,8 @@ import mongoose, { Schema, model, models } from "mongoose";
 
 export interface IMessage {
     _id ? : mongoose.Types.ObjectId,
+    role : String,
+    belongsTo : mongoose.Types.ObjectId,
     content : String,
     createdAt : Date,
     updatedAt : Date
@@ -10,6 +12,10 @@ export interface IMessage {
 
 export const MessagesSchema = new Schema<IMessage>(
     {
+        belongsTo : { type : mongoose.SchemaTypes.ObjectId,
+                      ref : "Conversation"
+                    },
+        role : {type : String , required : true},
         content : {type : String}
     },
     {

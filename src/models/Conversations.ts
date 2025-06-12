@@ -1,5 +1,6 @@
 import mongoose, { Schema ,models,model} from "mongoose";
 import { IMessage } from "./Message";
+
 export interface IConversation {
     _id?: mongoose.Types.ObjectId,
     messages?: [IMessage]
