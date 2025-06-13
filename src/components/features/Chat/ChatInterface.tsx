@@ -6,6 +6,7 @@ import axios from 'axios';
 
 interface Message {
   _id: string;
+  role:String,
   content: string;
   sender: string;
   createdAt: string;
@@ -24,7 +25,7 @@ export default function ChatInterface() {
 
     const fetchMessages = async () => {
       try {
-        const res = await axios.get(`/api/messages/${id}`);
+        const res = await axios.get(`/api/conversations/${id}`);
         setMessages(res.data);
       } catch (error) {
         console.error('Failed to load messages:', error);
@@ -40,7 +41,7 @@ export default function ChatInterface() {
     setLoading(true);
 
     try {
-      const res = await axios.post(`/api/messages/${id}`, {
+      const res = await axios.post(`/api/conversations/${id}`, {
         content: {
           message : newMessage
           },
