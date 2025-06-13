@@ -6,3 +6,5 @@
 
 
 ``` https://youtu.be/G4F73osodzA?feature=shared ```
+
+``` https://github.com/nareshbhatia/nextjs-nested-layouts/blob/main/src/app/client-components/layout.tsx ```
