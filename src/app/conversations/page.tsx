@@ -1,23 +1,35 @@
-
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from "@/components/ui/resizable"
-import History from "@/components/features/History/History"
+} from "@/components/ui/resizable";
+import History from "@/components/features/History/History";
+import ChatInterface from "@/components/features/Chat/ChatInterface";
+import Preview from "@/components/features/preview/Preview";
 export default function ResizableComponent() {
   return (
+    <>
+
     <ResizablePanelGroup
       direction="horizontal"
-      className=" w-full h-full rounded-lg border"
-    >
-     <History/>
+      className="w-full min-h-[900px] rounded-lg border"
+      >
+      <ResizablePanel defaultSize={25}>
+        <History />
+      </ResizablePanel>
+      
       <ResizableHandle withHandle />
-      <ResizablePanel defaultSize={75}>
-        <div className="flex h-full items-center justify-center p-6">
-          <span className="font-semibold">Content</span>
-        </div>
+      
+      <ResizablePanel defaultSize={25}>
+        <ChatInterface />
+      </ResizablePanel>
+      <ResizableHandle withHandle />
+
+    <ResizablePanel defaultSize={55}>
+        <Preview />
       </ResizablePanel>
     </ResizablePanelGroup>
-  )
+
+    </>
+  );
 }

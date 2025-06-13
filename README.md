@@ -4,4 +4,5 @@
 
 ```https://github.com/hiteshchoudhary/reelspro-imagekit-nextjs```
 
-``` https://stackoverflow.com/questions/73554309/typescript-error-when-defining-property-as-objectid-in-mongoose ```
+
+``` https://youtu.be/G4F73osodzA?feature=shared ```

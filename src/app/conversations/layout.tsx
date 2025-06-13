@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function ConversationLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
