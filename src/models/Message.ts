@@ -1,6 +1,4 @@
 import mongoose, { Schema, model, models } from "mongoose";
-
-
 export interface IMessage {
     _id?: mongoose.Types.ObjectId,
     belongsTo: Schema.Types.ObjectId,

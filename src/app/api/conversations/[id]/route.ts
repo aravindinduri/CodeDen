@@ -72,7 +72,7 @@ export async function GET(
 
     const conversation = await Conversation.findById(id).populate({
       path: "messages",
-      options: { sort: { createdAt: 1 } }, 
+      options: { sort: { createdAt: 1 } },
     });
 
     if (!conversation) {
@@ -86,5 +86,65 @@ export async function GET(
   } catch (err) {
     console.error(err);
     return new NextResponse("Error retrieving messages", { status: 500 });
+  }
+}
+
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const body = await request.json();
+  const { title } = body;
+
+  if (!title) {
+    return new NextResponse("Title is required", { status: 400 });
+  }
+
+  try {
+    await connectToDB();
+
+    const updated = await Conversation.findByIdAndUpdate(
+      id,
+      { title },
+    );
+
+    if (!updated) {
+      return new NextResponse("Conversation not found", { status: 404 });
+    }
+
+    return new NextResponse(JSON.stringify(updated), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    console.error(err);
+    return new NextResponse("Failed to update title", { status: 500 });
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const { id } = params;
+
+  try {
+    await connectToDB();
+
+    const conversation = await Conversation.findById(id);
+    if (!conversation) {
+      return new NextResponse("Conversation not found", { status: 404 });
+    }
+
+    await Message.deleteMany({ belongsTo: conversation._id });
+
+    await Conversation.findByIdAndDelete(conversation._id);
+
+    return new NextResponse(null, { status: 204 }); 
+  } catch (err) {
+    console.error("DELETE error:", err);
+    return new NextResponse("Failed to delete conversation", { status: 500 });
   }
 }

@@ -1,37 +1,17 @@
-"use client"
-import React from 'react'
-import axios from 'axios';
-import { useState } from 'react'
-import { HistoryList } from './HistoryList';
+'use client';
+
+import React from 'react';
+import { HistoryList } from '@/components/features/History/HistoryList';
 
 export default function History() {
-
-  const addNewConversation = async () => {
-    try {
-      const response = await axios.post("/api/conversations", {
-        title : "New Conversation",
-      });
-      console.log("Conversation created:", response.data);
-    } catch (error) {
-      console.error("Failed to create new conversation:", error);
-    }
-  };
-  
   return (
-    <div  className='h-full bg-accent-foreground'>
-      <ul className="list bg-base-100 shadow-md">
-        <li className="p-4 pb-2 text-2xl opacity-60 tracking-wide text-gray-50">Past Conversations</li>
-        <li className="p-4 pb-2 text-2xl opacity-60 tracking-wide text-gray-50 cursor-pointer border-1 justify-center flex flex-col ">
-          <button onClick={addNewConversation} className=' border-2 p-2 cursor-pointer shadow-base-100 bg-gray-200 text-gray-900 ' >New Conversation</button>
-        </li>
-
-        <li className="list-row cursor-pointer">
-          <div className="list-col-grow">
-          <HistoryList/>
-          </div>
-        </li>
-      </ul>
-
+    <div className="h-full bg-base-200 border-r border-base-300 flex flex-col">
+      <div className="p-4 border-b border-base-300">
+        <h2 className="text-xl font-semibold text-white">Past Conversations</h2>
+      </div>
+      <div className="flex-1 overflow-y-auto p-4">
+        <HistoryList />
+      </div>
     </div>
-  )
+  );
 }
