@@ -10,3 +10,5 @@
 ``` https://github.com/nareshbhatia/nextjs-nested-layouts/blob/main/src/app/client-components/layout.tsx ```
 
 ``` https://github.com/instructa/ai-prompts/tree/main ```
+
+``` https://ai.google.dev/gemini-api/docs/text-generation ```

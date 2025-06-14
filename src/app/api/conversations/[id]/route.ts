@@ -4,15 +4,17 @@ import Conversation from "@/models/Conversations";
 import Message from "@/models/Message";
 import { generateAiResponse } from "@/utils/get-ai-response";
 
-export async function POST(request: NextRequest,context : { params: { id: string } }) {
-  const { content } = await request.json();
-
-  if (!content || !content.message) {
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const body = await request.json();
+  const message = body?.content?.message;
+  if (!message) {
     return new NextResponse("Message content is required", { status: 400 });
   }
 
-  const { message } = content;
-  const id  = context.params;
+  const { id } = await params;
 
   try {
     await connectToDB();
@@ -24,21 +26,32 @@ export async function POST(request: NextRequest,context : { params: { id: string
 
     const airesponse = await generateAiResponse({ userQuery: message });
 
+    if ("error" in airesponse) {
+      return new NextResponse(JSON.stringify({ error: airesponse.error }), {
+        status: 500,
+      });
+    }
+
+    const { content, reactComponent } = airesponse;
+
     const userMessage = await Message.create({
       role: "user",
       content: message,
+      belongsTo: conversation._id,
     });
 
     const aiMessage = await Message.create({
-      role: "assistant",
-      content: airesponse, 
+      role: "ai",
+      content,
+      reactComponent,
+      belongsTo: conversation._id,
     });
 
-    await Conversation.findByIdAndUpdate(id, {
+    await Conversation.findByIdAndUpdate(conversation._id, {
       $push: { messages: { $each: [userMessage._id, aiMessage._id] } },
     });
 
-    return new NextResponse(JSON.stringify([userMessage, aiMessage]), {
+    return new NextResponse(JSON.stringify(aiMessage), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
@@ -50,14 +63,17 @@ export async function POST(request: NextRequest,context : { params: { id: string
 
 export async function GET(
   request: NextRequest,
-  context : { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const id = context.params;
+  const { id } = await params;
 
   try {
     await connectToDB();
 
-    const conversation = await Conversation.findById(id).populate("messages");
+    const conversation = await Conversation.findById(id).populate({
+      path: "messages",
+      options: { sort: { createdAt: 1 } }, 
+    });
 
     if (!conversation) {
       return new NextResponse("Conversation not found", { status: 404 });

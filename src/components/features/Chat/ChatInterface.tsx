@@ -1,14 +1,13 @@
 'use client';
-
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import axios from 'axios';
 
 interface Message {
   _id: string;
-  role:String,
+  role: 'user' | 'ai';
   content: string;
-  sender: string;
+  reactComponent?: string;
   createdAt: string;
 }
 
@@ -37,17 +36,23 @@ export default function ChatInterface() {
 
   const handleSendMessage = async () => {
     if (!newMessage.trim()) return;
-
     setLoading(true);
 
     try {
       const res = await axios.post(`/api/conversations/${id}`, {
-        content: {
-          message : newMessage
-          },
+        content: { message: newMessage },
       });
 
-      setMessages((prev) => [...prev, res.data]);
+      const aiResponse: Message = res.data;
+
+      const userMessage: Message = {
+        _id: `${Date.now()}`,
+        role: 'user',
+        content: newMessage,
+        createdAt: new Date().toISOString(),
+      };
+
+      setMessages((prev) => [...prev, userMessage, aiResponse]);
       setNewMessage('');
     } catch (error) {
       console.error('Error sending message:', error);
@@ -58,8 +63,8 @@ export default function ChatInterface() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="p-4 border-b">
-        <h1 className="text-xl font-semibold">Conversation</h1>
+      <div className="p-4 border-b bg-base-200">
+        <h1 className="text-xl font-semibold text-white">Conversation</h1>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-base-100">
@@ -67,13 +72,38 @@ export default function ChatInterface() {
           <p className="text-gray-400">No messages yet.</p>
         )}
 
-        {messages.map((msg) => (
-          <div key={msg._id} className="text-sm text-white">
-            <div className="font-semibold text-gray-300">{msg.sender}</div>
-            <div>{msg.content}</div>
-            <div className="text-xs text-gray-500">{new Date(msg.createdAt).toLocaleTimeString()}</div>
-          </div>
-        ))}
+        {messages.map((msg) => {
+          const isUser = msg.role === 'user';
+
+          return (
+            <div
+              key={msg._id}
+              className={`p-3 border rounded-md text-sm ${
+                isUser ? 'bg-gray-700 text-white' : 'bg-gray-800 text-green-300'
+              }`}
+            >
+              <div className="font-semibold text-gray-400 mb-1">
+                {isUser ? 'You' : 'AI Assistant'}
+              </div>
+
+              <div className="whitespace-pre-wrap text-white mb-2">
+                {msg.content}
+              </div>
+
+              {msg.reactComponent && (
+                <div className="rounded bg-black p-3 overflow-x-auto text-green-300 text-sm mb-2">
+                  <pre>
+                    <code>{msg.reactComponent}</code>
+                  </pre>
+                </div>
+              )}
+
+              <div className="text-xs text-gray-500 mt-2">
+                {new Date(msg.createdAt).toLocaleTimeString()}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       <div className="border-t p-4 bg-base-200">
@@ -82,7 +112,7 @@ export default function ChatInterface() {
             type="text"
             name="message"
             placeholder="Type your message..."
-            className="input input-bordered w-full text-gray-300"
+            className="input input-bordered w-full text-white"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             disabled={loading}
@@ -92,7 +122,7 @@ export default function ChatInterface() {
             onClick={handleSendMessage}
             disabled={loading}
           >
-            Send
+            {loading ? 'Sending...' : 'Send'}
           </button>
         </div>
       </div>
