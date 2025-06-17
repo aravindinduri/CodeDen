@@ -2,7 +2,41 @@
 
 **CodeDen** is an AI-powered coding assistant that helps developers generate React components. Built with **Next.js**, **MongoDB**, and powered by **Gemini 2.0**, 
 
+##  Run Locally
 
+To set up and run the project locally, follow these steps:
+
+### 1️ Clone the Repository
+```sh
+git clone https://github.com/aravindinduri/CodeDen.git
+```
+
+### 2️ Navigate to the Project Directory
+```sh
+cd CodeDen
+```
+
+### 3️ Install Dependencies
+```sh
+npm install
+```
+
+### 4️ Start the Development Server
+```sh
+npm run dev
+```
+
+### 5️ Open in Browser  
+The application will run at:  
+```
+http://localhost:3000
+```
+
+#### Sample .env
+```
+GEMINI_API_KEY=your_key
+MONGODB_URI=your_mongo_connection
+```
 ### Project Directory structure :
 ```
 └── aravindinduri-codeden/
